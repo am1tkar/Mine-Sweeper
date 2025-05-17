@@ -1,0 +1,47 @@
+body {
+	background-color: black;
+	text-align: center;
+	color: lightgray;
+	font-family: 'Press Start 2P', cursive;
+}
+
+table {
+	margin: 100px auto;
+	border: 1px solid lightgray;
+}
+
+.cell {
+	width: 40px;
+	height: 40px;
+	font-size: 1.5em;
+}
+
+
+
+.game-over button {
+	border-color: yellow;
+	color: yellow;
+	background-color: Black;
+	padding: 25px;
+	font-family: 'Press Start 2P', cursive;
+	font-size: xxx-large;
+	cursor: pointer;
+}
+
+.pacman-main-title {
+	width: 400px;
+
+}
+
+
+
+.hide {
+	display: none;
+}
+
+
+.fas .fa-ghost{
+width: 100%;
+}
+
+
