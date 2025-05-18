@@ -1,8 +1,10 @@
 'use strict'
 
 var gBoard
+
 const MINE = '💣'
 const CELL = '🟦'
+const MARK = '🚩'
 
 const gGame = {
     isOn: false,
@@ -19,12 +21,10 @@ const gLevel = {
 function onInit() {
     gBoard = buildBoard()
     renderBoard(gBoard, '.board-container')
-
-    // setMinesNegsCount(gBoard)
-    // hideElement('.game-over')
-    // gGame.isOn = true
+    hideElement('.game-over')
+    gGame.isOn = true
 }
-
+//model
 function buildBoard() {
     const size = gLevel.SIZE
     const board = []
@@ -143,18 +143,8 @@ function gameOver() {
     showElement('.game-over')
 
     var elSpan = document.querySelector('.game-over span')
-    if (countFood() === 0) {
-        elSpan.innerText = 'Victorious'
-        playSound('win')
-    } else {
-        elSpan.innerText = 'Game Over!'
-    }
-
-    clearInterval(gIntervalGhosts)
-    clearInterval(gCherryInterval)
-    // TODO
-
-    // clearInterval(gGhostsInterval)
+    elSpan.innerText = 'Game Over!'
+    revealAllBoard()
 }
 
 

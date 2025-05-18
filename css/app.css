@@ -1,7 +1,7 @@
 body {
-	background-color: black;
+	background-color: rgb(255, 255, 255);
 	text-align: center;
-	color: lightgray;
+	color: rgb(0, 0, 0);
 	font-family: 'Press Start 2P', cursive;
 }
 
@@ -11,10 +11,15 @@ table {
 }
 
 .cell {
+	border: 1px solid lightgray;
 	width: 40px;
 	height: 40px;
 	font-size: 1.5em;
 }
+
+/* .censured{
+	background-color: rgb(109, 109, 109);
+} */
 
 
 

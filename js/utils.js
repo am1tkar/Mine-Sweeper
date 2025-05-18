@@ -1,5 +1,6 @@
 'use strict'
 
+//DOM
 function renderBoard(mat, selector) {
 
     var strHTML = '<table><tbody>'
@@ -10,8 +11,8 @@ function renderBoard(mat, selector) {
 
             const cell = mat[i][j]
             const className = `cell cell-${i}-${j}`
-            var cellDisplay = (cell.cellType === MINE) ? cell.cellType : cell.minesAroundCount
-            strHTML += `<td class="${className}" onclick="renderCell(this)">${cellDisplay}</td>`
+
+            strHTML += `<td id="noContextMenu" class="${className}" onclick="onCellClicked(this, ${i}, ${j})" oncontextmenu="onCellMarked(this, ${i}, ${j})"> </td>`
         }
 
         strHTML += '</tr>'
@@ -21,29 +22,68 @@ function renderBoard(mat, selector) {
 
     const elContainer = document.querySelector(selector)
     elContainer.innerHTML = strHTML
+}
 
 
+function onCellMarked(elCell, i, j) {
+
+    const noContext = document.getElementById("noContextMenu");
+    noContext.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+    });
 
 
+    if (!gGame.isOn) return
+    if (gBoard[i][j].isMarked === true) return
+
+    gBoard[i][j].isMarked = true
+    gGame.markedCount++
+    elCell.innerText = MARK
+}
+
+
+function onCellClicked(elCell, i, j) {
+console.log('click!');
+
+    if (!gGame.isOn) return
+    if (gBoard[i][j].isMarked === true) return
+
+    if (gBoard[i][j].cellType === CELL) revealCell(elCell, i, j)
+    if (gBoard[i][j].cellType === MINE) gameOver()
+    if (gBoard[i][j].cellType === MARK) unRevealCell(elCell, i, j)
 
 }
 
-// location is an object like this - { i: 2, j: 7 }
-function renderCell(location, value) {
-    // Select the elCell and set the value
-    const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
-    elCell.innerHTML = value
+function unRevealCell(elCell, i, j) {
+    elCell.innerText = ''
+    gBoard[i][j].isMarked = false
+    gGame.markedCount--
 }
 
-function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
+============
+function revealCell(elCell, i, j) {
+    if (elCell.innerText === CELL) {
+        if (gBoard[i][j].minesAroundCount) {
+            // expandReveal(elCell, i, j)
+
+            console.log('expand!');
+        }
+        return elCell.innerText = gBoard[i][j].minesAroundCount
     }
-    return color;
 }
 
+function revealAllBoard() {
+    var cellDisplay = (cell.cellType === MINE) ? cell.cellType : cell.minesAroundCount
+
+    var elCells = document.querySelectorAll('.cell')
+    elCells.forEach(elCell => {
+        elCell.innerText = cellDisplay
+    });
+}
+
+function expandReveal(board, elCell, i, j) {
+
+}
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min
