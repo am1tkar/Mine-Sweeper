@@ -1,57 +1,125 @@
 'use strict'
 
-const WALL = '🧱'
-const FOOD = '🔹'
-const SUPERFOOD = '💫'
-const CHERRY = '🍒'
-const EMPTY = ' '
-var gCountFood = 0
 var gBoard
-var gEmptyCells = []
+const MINE = '💣'
+const CELL = '🟦'
 
 const gGame = {
-    score: 0,
-    isOn: false
+    isOn: false,
+    revealedCount: 0,
+    markedCount: 0,
+    secsPassed: 0
 }
 
+const gLevel = {
+    SIZE: 4,
+    MINES: 2
+}
 
-function init() {
-    gGhosts = []
+function onInit() {
     gBoard = buildBoard()
-    createPacman(gBoard)
-    createGhosts(gBoard)
-    hideElement('.game-over')
     renderBoard(gBoard, '.board-container')
-    setInterval(() => { placeCherry() }, 15000);
-    gGame.isOn = true
+
+    // setMinesNegsCount(gBoard)
+    // hideElement('.game-over')
+    // gGame.isOn = true
 }
 
 function buildBoard() {
-    const size = 10
+    const size = gLevel.SIZE
     const board = []
 
     for (var i = 0; i < size; i++) {
         board.push([])
 
         for (var j = 0; j < size; j++) {
-            board[i][j] = FOOD
 
-            if (i === 0 || i === size - 1 ||
-                j === 0 || j === size - 1 ||
-                (j === 3 && i > 4 && i < size - 2)) {
-                board[i][j] = WALL
+            board[i][j] = {
+                minesAroundCount: 4,
+                isRevealed: false,
+                isMine: false,
+                isMarked: false,
+                cellType: CELL,
             }
 
-            if (i === 1 && j === 1 ||
-                i === size - 2 && j === size - 2 ||
-                i === size - 2 && j === 1 ||
-                i === 1 && j === size - 2) {
-                board[i][j] = SUPERFOOD
+        }
+    }
+
+    createMines(board)
+    console.table(board)
+    return board
+}
+
+//create mines random locations
+function createMines(board) {
+    var numOfMines
+
+    switch (gLevel.SIZE) {
+        case 4:
+            numOfMines = 2
+            break
+        case 8:
+            numOfMines = 14
+            break
+        case 32:
+            numOfMines = 32
+            break
+    }
+
+    for (var i = 0; i < numOfMines; i++) {
+        createMine(board)
+    }
+}
+
+function createMine(board) {
+    const randomI = getRandomInt(0, gLevel.SIZE - 1)
+    const randomJ = getRandomInt(0, gLevel.SIZE - 1)
+
+    return board[randomI][randomJ] = {
+        minesAroundCount: 4,
+        isRevealed: false,
+        isMine: true,
+        isMarked: false,
+        cellType: MINE,
+    }
+
+}
+
+//I don't get i j, I need to run through all the cells and update how many mines there are around it
+
+// Count mines around each cell and set the cell's minesAroundCount.
+
+// function setMinesNegsCount(board) {
+//     for (var i = 0; i < board.length; i++) {
+//         for (var j = 0; j < board[0].length; j++) {
+//             var currCell = board[i][j]
+//             if (currCell.cellType === CELL) {
+//                 countNegs(board, i, j)
+//             }
+
+
+//         }
+//     }
+// }
+
+function countNegsMines(board, rowIdx, colIdx) {
+
+    var countMines = 0
+    for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+        if (i < 0 || i >= board.length) continue
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (i === rowIdx && j === colIdx) continue
+            if (j < 0 || j >= board[0].length) continue
+            var currCell = board[i][j]
+            if (currCell.cellType === MINE) {
+                countMines++
             }
         }
     }
-    return board
+    return countMines
 }
+
+
 
 function updateScore(diff) {
     // TODO: update model 
@@ -64,16 +132,6 @@ function updateScore(diff) {
     elScore.innerText = gGame.score
 }
 
-
-function countFood() {
-    gCountFood = 0 //because we don't want to sum all existing food from the last step withing th current
-    for (var i = 0; i < gBoard.length; i++) {
-        for (var j = 0; j < gBoard[i].length; j++) {
-            if (gBoard[i][j] === FOOD) gCountFood++
-        }
-    }
-    return gCountFood
-}
 
 function checkVictory() {
     if (countFood() !== 0) {
@@ -105,33 +163,3 @@ function gameOver() {
 }
 
 
-
-
-function placeCherry() {
-    const emptyCells = getEmptyCells()
-    if (!emptyCells.length) return
-
-    const randIdx = getRandomIntInclusive(0, emptyCells.length - 1)
-
-    const randCherryLocation = emptyCells[randIdx]
-    if (!randCherryLocation) return
-
-    gBoard[randCherryLocation.i][randCherryLocation.j] = CHERRY
-    renderCell(randCherryLocation, CHERRY)
-}
-
-
-
-function getEmptyCells() {
-    var emptyCells = []
-
-    for (var i = 0; i < gBoard.length; i++) {
-        for (var j = 0; j < gBoard[0].length; j++) {
-            if (gBoard[i][j] === EMPTY) {
-                emptyCells.push({ i, j })
-            }
-        }
-    }
-
-    return emptyCells
-}

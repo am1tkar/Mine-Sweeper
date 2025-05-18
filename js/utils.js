@@ -9,16 +9,24 @@ function renderBoard(mat, selector) {
         for (var j = 0; j < mat[0].length; j++) {
 
             const cell = mat[i][j]
+            
             const className = `cell cell-${i}-${j}`
 
-            strHTML += `<td class="${className}">${cell}</td>`
+            strHTML += `<td class="${className}" onclick="renderCell(this)">${cell.cellType}</td>`
         }
+        
         strHTML += '</tr>'
     }
+
     strHTML += '</tbody></table>'
     
     const elContainer = document.querySelector(selector)
     elContainer.innerHTML = strHTML
+
+    
+
+
+
 }
 
 // location is an object like this - { i: 2, j: 7 }
@@ -38,7 +46,7 @@ function getRandomColor() {
 }
 
 
-function getRandomIntInclusive(min, max) {
+function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min
 }
 

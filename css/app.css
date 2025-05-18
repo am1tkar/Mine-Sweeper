@@ -18,7 +18,7 @@ table {
 
 
 
-.game-over button {
+/* .game-over button {
 	border-color: yellow;
 	color: yellow;
 	background-color: Black;
@@ -26,11 +26,10 @@ table {
 	font-family: 'Press Start 2P', cursive;
 	font-size: xxx-large;
 	cursor: pointer;
-}
+} */
 
-.pacman-main-title {
-	width: 400px;
-
+.main-title {
+border-bottom:solid 1.5px white; 
 }
 
 
@@ -44,4 +43,6 @@ table {
 width: 100%;
 }
 
-
+.footer{
+border-top: solid 1.5px white;
+}

@@ -5,24 +5,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Pacman</title>
+    <title>Mine Sweeper</title>
     <link rel="stylesheet" href="css/app.css">
 
 
 </head>
 
-<body onload="()" onkeyup="movePacman(event)">
+<body onload="onInit()">
 
-
+    <h1 class="main-title">Mine Sweeper</h1>
     <h2 class="score">Score: <span>0</span></h2>
     <br>
     <div class="game-over">
         <h2><span></span></h2>
-    </br>
-        <button onclick="init()">Play again!</button>
+        </br>
+        <!-- <button onclick="init()">Play again!</button> -->
     </div>
 
     <div class="board-container"></div>
+
+    <div class="footer">Amit Karny</div>
+
+
+
+
     <script src="js/utils.js"></script>
     <script src="js/game.js"></script>
 
