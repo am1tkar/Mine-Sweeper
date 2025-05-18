@@ -46,6 +46,7 @@ function buildBoard() {
     }
 
     createMines(board)
+    setMinesNegsCount(board)
     console.table(board)
     return board
 }
@@ -71,6 +72,7 @@ function createMines(board) {
     }
 }
 
+//create single mine
 function createMine(board) {
     const randomI = getRandomInt(0, gLevel.SIZE - 1)
     const randomJ = getRandomInt(0, gLevel.SIZE - 1)
@@ -85,23 +87,18 @@ function createMine(board) {
 
 }
 
-//I don't get i j, I need to run through all the cells and update how many mines there are around it
+// change the mines count value accoarding to countNEgsMines function
+function setMinesNegsCount(board) {
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[0].length; j++) {
+            var currCell = board[i][j]
+            if (currCell.cellType === CELL) currCell.minesAroundCount = countNegsMines(board, i, j)
+        }
+    }
+    return
+}
 
-// Count mines around each cell and set the cell's minesAroundCount.
-
-// function setMinesNegsCount(board) {
-//     for (var i = 0; i < board.length; i++) {
-//         for (var j = 0; j < board[0].length; j++) {
-//             var currCell = board[i][j]
-//             if (currCell.cellType === CELL) {
-//                 countNegs(board, i, j)
-//             }
-
-
-//         }
-//     }
-// }
-
+//count negs cells only if it's type is MINE
 function countNegsMines(board, rowIdx, colIdx) {
 
     var countMines = 0
@@ -118,8 +115,6 @@ function countNegsMines(board, rowIdx, colIdx) {
     }
     return countMines
 }
-
-
 
 function updateScore(diff) {
     // TODO: update model 

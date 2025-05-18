@@ -9,21 +9,20 @@ function renderBoard(mat, selector) {
         for (var j = 0; j < mat[0].length; j++) {
 
             const cell = mat[i][j]
-            
             const className = `cell cell-${i}-${j}`
-
-            strHTML += `<td class="${className}" onclick="renderCell(this)">${cell.cellType}</td>`
+            var cellDisplay = (cell.cellType === MINE) ? cell.cellType : cell.minesAroundCount
+            strHTML += `<td class="${className}" onclick="renderCell(this)">${cellDisplay}</td>`
         }
-        
+
         strHTML += '</tr>'
     }
 
     strHTML += '</tbody></table>'
-    
+
     const elContainer = document.querySelector(selector)
     elContainer.innerHTML = strHTML
 
-    
+
 
 
 
@@ -37,12 +36,12 @@ function renderCell(location, value) {
 }
 
 function getRandomColor() {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
 
@@ -50,16 +49,16 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-function showElement(selector){
+function showElement(selector) {
     var el = document.querySelector(selector)
     el.classList.remove('hide')
-    
+
 }
 
-function hideElement(selector){
+function hideElement(selector) {
     var el = document.querySelector(selector)
     el.classList.add('hide')
-    
+
 }
 
 function playSound(snd) {
