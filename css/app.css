@@ -51,3 +51,7 @@ width: 100%;
 .footer{
 border-top: solid 1.5px white;
 }
+
+.bomb{
+	background-color: red;
+}

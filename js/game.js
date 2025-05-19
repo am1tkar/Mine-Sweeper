@@ -18,6 +18,10 @@ const gLevel = {
     MINES: 2
 }
 
+
+var gMinesLocations = []
+
+
 function onInit() {
     gBoard = buildBoard()
     renderBoard(gBoard, '.board-container')
@@ -35,11 +39,12 @@ function buildBoard() {
         for (var j = 0; j < size; j++) {
 
             board[i][j] = {
+                cellType: CELL,
                 minesAroundCount: 4,
                 isRevealed: false,
                 isMine: false,
                 isMarked: false,
-                cellType: CELL,
+                location: `${i},${j}`,
             }
 
         }
@@ -53,21 +58,8 @@ function buildBoard() {
 
 //create mines random locations
 function createMines(board) {
-    var numOfMines
 
-    switch (gLevel.SIZE) {
-        case 4:
-            numOfMines = 2
-            break
-        case 8:
-            numOfMines = 14
-            break
-        case 32:
-            numOfMines = 32
-            break
-    }
-
-    for (var i = 0; i < numOfMines; i++) {
+    for (var i = 0; i < gLevel.MINES; i++) {
         createMine(board)
     }
 }
@@ -77,14 +69,16 @@ function createMine(board) {
     const randomI = getRandomInt(0, gLevel.SIZE - 1)
     const randomJ = getRandomInt(0, gLevel.SIZE - 1)
 
+    gMinesLocations.push(`${randomI},${randomJ}`)
+
     return board[randomI][randomJ] = {
+        cellType: MINE,
         minesAroundCount: 4,
         isRevealed: false,
         isMine: true,
         isMarked: false,
-        cellType: MINE,
+        location: `${randomI},${randomJ}`,
     }
-
 }
 
 // change the mines count value accoarding to countNEgsMines function
@@ -117,8 +111,6 @@ function countNegsMines(board, rowIdx, colIdx) {
 }
 
 
-
-
 function onCellMarked(elCell, i, j) {
 
     const noContext = document.getElementById("noContextMenu");
@@ -129,11 +121,10 @@ function onCellMarked(elCell, i, j) {
     if (!gGame.isOn) return
     if (gBoard[i][j].isMarked === true) return
 
-        gBoard[i][j].isMarked = true
-        elCell.innerText = MARK
-        updateMarkCount()
-    }
-
+    gBoard[i][j].isMarked = true
+    elCell.innerText = MARK
+    updateMarkCount()
+}
 
 function onCellClicked(elCell, i, j) {
     console.log('click!');
@@ -142,21 +133,24 @@ function onCellClicked(elCell, i, j) {
     if (gBoard[i][j].isRevealed) return
     if (gBoard[i][j].isMarked === true) elCell.innerText = ''
     revealCell(elCell, i, j)
-    if (gBoard[i][j].cellType === CELL) revealCell(elCell, i, j)
+
+
+
+    if (gBoard[i][j].isMarked === true) {
+        gGame.revealedCount--
+    }
+
+    if (gBoard[i][j].cellType === CELL || gBoard[i][j].cellType === MARK) {
+        revealCell(elCell, i, j)
+    }
     if (gBoard[i][j].cellType === MINE) {
-        revealAllBoard()
+        showAllMineCell(i, j)
         gameOver()
     }
-    if (gBoard[i][j].cellType === MARK) unRevealCell( i, j)
+
+
 
 }
-
-function unRevealCell(i, j) {
-    
-    // gBoard[i][j].isMarked = false
-    // gGame.markedCount--
-}
-
 
 function revealCell(elCell, i, j) {
 
@@ -168,22 +162,9 @@ function revealCell(elCell, i, j) {
     } else {
         elCell.innerText += `${gBoard[i][j].minesAroundCount}`
         gBoard[i][j].isRevealed = true
-    updateRevealedCount()
+        updateRevealedCount()
+
     }
-}
-
-// function revealAllBoard() {
-
-//     var elCells = document.querySelectorAll('.cell')
-//     elCells.forEach(elCell => {
-
-//         elCell.innerText += `${getCellDisplay()}`
-//     });
-// }
-
-function getCellDisplay(i, j) {
-    var cellDisplay = (gBoard[i][j].cellType === MINE) ? gBoard[i][j].cellType : gBoard[i][j].minesAroundCount
-    return cellDisplay
 }
 
 function expandReveal(board, elCell, i, j) {
@@ -201,7 +182,7 @@ function expandReveal(board, elCell, i, j) {
 //     elScore.innerText = gGame.score
 // }
 
-function updateMarkCount(i, j) {
+function updateMarkCount() {
     gGame.markedCount++
     document.querySelector('.mark-count span').innerText = gGame.markedCount
 
@@ -213,20 +194,35 @@ function updateRevealedCount() {
     document.querySelector('.revealed-count span').innerText = gGame.revealedCount
 }
 
-// function checkVictory() {
-//     if (gGame.revealedCount = gLevel.SIZE**2) {
-//          gameOver()
-//     } else {
-//         gameOver()
-//         playSound('win')
-//         return true
-//     }
+function checkVictory(i, j) {
+    if (gGame.revealedCount !== gLevel.SIZE ** 2 - gLevel.MINES) return false
+    if (gBoard[i][j].isMine && gBoard[i][j].isMine) return false
+
+    return true
+}
+
+
+function showAllMineCell() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            const elCell = document.querySelector(`.cell-${i}-${j}`)
+            if (gMinesLocations.includes(gBoard[i][j].location)) {
+                elCell.innerText = MINE
+            }
+        }
+    }
+}
+
+
+
+
 
 
 function gameOver() {
     gGame.isOn = false
     showElement('.game-over')
-
     var elSpan = document.querySelector('.game-over span')
     elSpan.innerText = 'Game Over!'
+
+
 }
