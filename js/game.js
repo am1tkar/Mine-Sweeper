@@ -116,27 +116,112 @@ function countNegsMines(board, rowIdx, colIdx) {
     return countMines
 }
 
-function updateScore(diff) {
-    // TODO: update model 
-    gGame.score += diff
-    console.log(gGame.score);
 
 
-    // TODO: update dom
-    const elScore = document.querySelector('.score span')
-    elScore.innerText = gGame.score
+
+function onCellMarked(elCell, i, j) {
+
+    const noContext = document.getElementById("noContextMenu");
+    noContext.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+    });
+
+    if (!gGame.isOn) return
+    if (gBoard[i][j].isMarked === true) return
+
+        gBoard[i][j].isMarked = true
+        elCell.innerText = MARK
+        updateMarkCount()
+    }
+
+
+function onCellClicked(elCell, i, j) {
+    console.log('click!');
+
+    if (!gGame.isOn) return
+    if (gBoard[i][j].isRevealed) return
+    if (gBoard[i][j].isMarked === true) elCell.innerText = ''
+    revealCell(elCell, i, j)
+    if (gBoard[i][j].cellType === CELL) revealCell(elCell, i, j)
+    if (gBoard[i][j].cellType === MINE) {
+        revealAllBoard()
+        gameOver()
+    }
+    if (gBoard[i][j].cellType === MARK) unRevealCell( i, j)
+
+}
+
+function unRevealCell(i, j) {
+    
+    // gBoard[i][j].isMarked = false
+    // gGame.markedCount--
 }
 
 
-function checkVictory() {
-    if (countFood() !== 0) {
-        return false
-    } else {
+function revealCell(elCell, i, j) {
+
+    if (elCell.innerText) return
+
+    if (gBoard[i][j].isMine === true) {
+        elCell.innerText += `${MINE}`
         gameOver()
-        playSound('win')
-        return true
+    } else {
+        elCell.innerText += `${gBoard[i][j].minesAroundCount}`
+        gBoard[i][j].isRevealed = true
+    updateRevealedCount()
     }
 }
+
+// function revealAllBoard() {
+
+//     var elCells = document.querySelectorAll('.cell')
+//     elCells.forEach(elCell => {
+
+//         elCell.innerText += `${getCellDisplay()}`
+//     });
+// }
+
+function getCellDisplay(i, j) {
+    var cellDisplay = (gBoard[i][j].cellType === MINE) ? gBoard[i][j].cellType : gBoard[i][j].minesAroundCount
+    return cellDisplay
+}
+
+function expandReveal(board, elCell, i, j) {
+
+}
+
+// function updateScore(diff) {
+//     // TODO: update model 
+//     gGame.score += diff
+//     console.log(gGame.score);
+
+
+//     // TODO: update dom
+//     const elScore = document.querySelector('.score span')
+//     elScore.innerText = gGame.score
+// }
+
+function updateMarkCount(i, j) {
+    gGame.markedCount++
+    document.querySelector('.mark-count span').innerText = gGame.markedCount
+
+
+}
+
+function updateRevealedCount() {
+    gGame.revealedCount++
+    document.querySelector('.revealed-count span').innerText = gGame.revealedCount
+}
+
+// function checkVictory() {
+//     if (gGame.revealedCount = gLevel.SIZE**2) {
+//          gameOver()
+//     } else {
+//         gameOver()
+//         playSound('win')
+//         return true
+//     }
+
 
 function gameOver() {
     gGame.isOn = false
@@ -144,7 +229,4 @@ function gameOver() {
 
     var elSpan = document.querySelector('.game-over span')
     elSpan.innerText = 'Game Over!'
-    revealAllBoard()
 }
-
-
