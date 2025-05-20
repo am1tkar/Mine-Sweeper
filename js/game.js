@@ -69,24 +69,34 @@ function buildBoard() {
 }
 
 //create mines random locations
-function createMines(board) {
+function createMines(board, firstI, firstJ) {
 
     for (var i = 0; i < gLevel.MINES; i++) {
         const randomI = getRandomInt(0, gLevel.SIZE - 1)
         const randomJ = getRandomInt(0, gLevel.SIZE - 1)
 
-        gMinesLocations.push(`${randomI},${randomJ}`)
+        if (gBoard[firstI][firstJ].isMine) continue
 
-        board[randomI][randomJ] = {
-            cellType: MINE,
-            isRevealed: false,
-            isMine: true,
-            isMarked: false,
-            location: `${randomI},${randomJ}`,
+        if (firstI === randomI && firstJ === randomJ) continue
+
+
+        if (!gMinesLocations.includes(`${randomI},${randomJ}`)) {
+
+            gMinesLocations.push(`${randomI},${randomJ}`)
+
+            board[randomI][randomJ] = {
+                cellType: MINE,
+                isRevealed: false,
+                isMine: true,
+                isMarked: false,
+                location: `${randomI},${randomJ}`,
+            }
+
         }
     }
-
 }
+        
+    
 
 function isFirstClick() {
     if (gGame.revealedCount !== 0) return false
@@ -98,8 +108,6 @@ function findMines() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[0].length; j++) {
             if (gBoard[i][j].isMine) console.log(gBoard[i][j].location);
-
-
         }
     }
 
@@ -184,7 +192,8 @@ function onCellClicked(elCell, i, j) {
     // console.log('click!');
 
     if (isFirstClick()) {
-        createMines(gBoard)
+
+        createMines(gBoard, i, j)
         setMinesNegsCount(gBoard)
     }
 
