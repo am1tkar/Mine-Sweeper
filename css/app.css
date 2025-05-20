@@ -6,7 +6,7 @@ body {
 }
 
 table {
-	margin: 100px auto;
+	margin:  auto;
 	border: 1px solid lightgray;
 }
 
@@ -43,9 +43,12 @@ border-bottom:solid 1.5px white;
 	display: none;
 }
 
-
-.fas .fa-ghost{
-width: 100%;
+button {
+	font-size: x-large;
+border: 0px;
+background-color: white;
+color: rgb(0, 0, 0);
+	font-family: 'Press Start 2P', cursive;
 }
 
 .footer{
@@ -55,3 +58,4 @@ border-top: solid 1.5px white;
 .bomb{
 	background-color: red;
 }
+
