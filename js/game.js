@@ -22,7 +22,6 @@ const gLevel = {
     MINES: 2
 }
 
-
 var gMinesLocations = []
 
 
@@ -31,6 +30,17 @@ function onInit() {
     renderBoard(gBoard, '.board-container')
     gGame.isOn = true
 }
+
+function reset() {
+    onInit()
+    zeroParams()
+    gGame.secsPassed = 0
+    gMinesLocations = []
+    var elSpan = document.querySelector('.restart-btn span')
+    return elSpan.innerText = `${NORMAL}`
+}
+
+
 //model
 function buildBoard() {
     const size = gLevel.SIZE
@@ -53,8 +63,7 @@ function buildBoard() {
         }
     }
 
-    createMines(board)
-    setMinesNegsCount(board)
+
     console.table(board)
     return board
 }
@@ -63,34 +72,40 @@ function buildBoard() {
 function createMines(board) {
 
     for (var i = 0; i < gLevel.MINES; i++) {
-        createMine(board)
+        const randomI = getRandomInt(0, gLevel.SIZE - 1)
+        const randomJ = getRandomInt(0, gLevel.SIZE - 1)
+
+        gMinesLocations.push(`${randomI},${randomJ}`)
+
+        board[randomI][randomJ] = {
+            cellType: MINE,
+            isRevealed: false,
+            isMine: true,
+            isMarked: false,
+            location: `${randomI},${randomJ}`,
+        }
     }
 
 }
 
-function reset() {
-    onInit()
-    var elSpan = document.querySelector('.restart-btn span')
-    return elSpan.innerText = `${NORMAL}`    
+function isFirstClick() {
+    if (gGame.revealedCount !== 0) return false
+    return true
 }
-//create single mine
-function createMine(board) {
-    const randomI = getRandomInt(0, gLevel.SIZE - 1)
-    const randomJ = getRandomInt(0, gLevel.SIZE - 1)
 
-    gMinesLocations.push(`${randomI},${randomJ}`)
 
-    return board[randomI][randomJ] = {
-        cellType: MINE,
-        isRevealed: false,
-        isMine: true,
-        isMarked: false,
-        location: `${randomI},${randomJ}`,
+function findMines() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            if (gBoard[i][j].isMine) console.log(gBoard[i][j].location);
+
+
+        }
     }
 
 }
 
-// change the mines count value accoarding to countNEgsMines function
+// change the mines count value accoarding to countNegsMines function
 function setMinesNegsCount(board) {
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
@@ -101,7 +116,7 @@ function setMinesNegsCount(board) {
     return
 }
 
-
+// count neighbours
 function countNegs(board, rowIdx, colIdx) {
 
     var countNegs = 0
@@ -118,7 +133,6 @@ function countNegs(board, rowIdx, colIdx) {
     }
     return countNegs
 }
-
 
 
 //count negs cells only if it's type is MINE
@@ -160,7 +174,7 @@ function onCellMarked(elCell, i, j) {
     elCell.innerText = MARK
     updateMarkCount()
 
-checkVictory()
+    checkVictory()
 
 }
 
@@ -169,26 +183,28 @@ function onCellClicked(elCell, i, j) {
     if (!gGame.isOn) return
     // console.log('click!');
 
+    if (isFirstClick()) {
+        createMines(gBoard)
+        setMinesNegsCount(gBoard)
+    }
 
 
     if (gBoard[i][j].isRevealed) return
-    if (gBoard[i][j].isMarked === true) elCell.innerText = ''
-    revealCell(elCell, i, j)
+    if (gBoard[i][j].isMarked) {
+        elCell.innerText = ''
+        revealCell(elCell, i, j)
+        decreaseMarkCount()
+    }
 
-
-
-    // if (gBoard[i][j].isMarked === true) {
-    //     gGame.revealedCount--
-    // }
 
     if (gBoard[i][j].cellType === CELL) {
         revealCell(elCell, i, j)
-        elCell.classList.add('.clicked')
+        elCell.classList.add('clicked')
     }
 
 
 
-checkVictory()
+    checkVictory()
 
     if (gBoard[i][j].cellType === MINE) {
         showAllMineCell(i, j)
@@ -236,7 +252,7 @@ function expandReveal(i, j) {
                     gBoard[x][y].isRevealed = true
                     updateRevealedCount()
 
-checkVictory()
+                    checkVictory()
 
 
                     var elCell = document.querySelector(`.cell.cell-${x}-${y}`)
@@ -273,6 +289,14 @@ function updateRevealedCount() {
     document.querySelector('.revealed-count span').innerText = gGame.revealedCount
 }
 
+function zeroParams() {
+    gGame.revealedCount = 0
+    gGame.markedCount = 0
+    document.querySelector('.revealed-count span').innerText = gGame.revealedCount
+    document.querySelector('.mark-count span').innerText = gGame.markedCount
+
+}
+
 function checkVictory() {
 
     if (gGame.revealedCount !== gLevel.SIZE ** 2 - gLevel.MINES) return false
@@ -285,9 +309,9 @@ function checkVictory() {
         }
     }
 
- var elSpan = document.querySelector('.restart-btn span')
-        elSpan.innerText = `${WIN}`
-gGame.isOn = false
+    var elSpan = document.querySelector('.restart-btn span')
+    elSpan.innerText = `${WIN}`
+    gGame.isOn = false
     return true
 }
 
