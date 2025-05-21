@@ -17,27 +17,14 @@ table {
 	font-size: 1.5em;
 }
 
-/* .censured{
-	background-color: rgb(109, 109, 109);
-} */
-
-
-
-/* .game-over button {
-	border-color: yellow;
-	color: yellow;
-	background-color: Black;
-	padding: 25px;
-	font-family: 'Press Start 2P', cursive;
-	font-size: xxx-large;
-	cursor: pointer;
-} */
 
 .main-title {
 border-bottom:solid 1.5px white; 
 }
-
-
+/* 
+.btns-group{
+	margin-right: 100px
+} */
 
 .hide {
 	display: none;
@@ -65,3 +52,6 @@ border-top: solid 1.5px lightgray
 	background-color: red;
 }
 
+.diffculty-container {
+	font-size: small;
+}

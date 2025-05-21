@@ -18,7 +18,6 @@ const gGame = {
     isOn: false,
     lives: 3,
     revealedCount: 0,
-    revealedMines: 0,
     markedCount: 0,
     secsPassed: 0
 }
@@ -34,7 +33,6 @@ function onInit() {
     gBoard = buildBoard()
     renderBoard(gBoard, '.board-container')
     zeroParams()
-    gGame.isOn = true
 }
 
 function reset() {
@@ -206,7 +204,6 @@ function onCellClicked(elCell, i, j) {
     }
 
     if (gBoard[i][j].isRevealed) return
-
     if (gBoard[i][j].isMarked === true) elCell.innerText = ''
 
     revealCell(elCell, i, j)
@@ -225,31 +222,32 @@ function revealCell(elCell, i, j) {
     elCell.classList.add('revealed')
 
     if (gBoard[i][j].isMine === true) {
-        if (gGame.lives >= 0) {
-            decreaseLiveCount()
-            elCell.innerText += `${MINE}`
-            setTimeout(() => {
-                unreavealCell(elCell, i, j)
-            }, 2000);
-            return
-        } else {
-            showAllMineCell(i, j)
+        playSound('boom')
+        elCell.innerText += `${MINE}`
+        decreaseLiveCount()
+
+
+        if (gGame.lives === 0) {
+            showAllMineCell()
             gameOver()
             return
         }
 
-    } else {
-        elCell.innerText += `${gBoard[i][j].minesAroundCount}`
-
-
-        if (gBoard[i][j].minesAroundCount === 0) {
-            expandReveal(i, j)
-        }
-
+        setTimeout(() => {
+            unreavealCell(elCell, i, j)
+        }, 2000);
+        return
     }
+
+    elCell.innerText += `${gBoard[i][j].minesAroundCount}`
+
+
+    if (gBoard[i][j].minesAroundCount === 0) expandReveal(i, j)
+
     updateRevealedCount()
     return
 }
+
 
 function expandReveal(i, j) {
 
@@ -316,6 +314,9 @@ function updateRevealedCount() {
 }
 
 function zeroParams() {
+    gGame.isOn = true
+
+    gGame.lives = 3
     gGame.secsPassed = 0
     gGame.revealedCount = 0
     gGame.markedCount = 0
@@ -326,7 +327,7 @@ function zeroParams() {
 }
 
 function checkVictory() {
-    if (gGame.lives <= 0) return false
+    if (gGame.lives < 1) return false
     if (gGame.revealedCount !== gLevel.SIZE ** 2 - gLevel.MINES) return false
     if (gGame.markedCount !== gLevel.MINES) return false
 
@@ -357,6 +358,7 @@ function showAllMineCell() {
 
 //when game is over
 function gameOver() {
+
     gGame.isOn = false
     var elSpan = document.querySelector('.restart-btn span')
     elSpan.innerText = `${LOSE}`
