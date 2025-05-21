@@ -26,6 +26,8 @@ function renderBoard(mat, selector) {
     
 }
 
+
+
 // count neighbours
 function countNegs(board, rowIdx, colIdx) {
 

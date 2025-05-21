@@ -44,15 +44,21 @@ border-bottom:solid 1.5px white;
 }
 
 button {
+	margin: 6px;
 	font-size: x-large;
 border: 0px;
 background-color: white;
 color: rgb(0, 0, 0);
-	font-family: 'Press Start 2P', cursive;
+font-family: 'Press Start 2P', cursive;
+}
+
+.restart-btn{
+	font-size: 75px;
 }
 
 .footer{
-border-top: solid 1.5px white;
+	margin-top: 15px;
+border-top: solid 1.5px lightgray
 }
 
 .bomb{
