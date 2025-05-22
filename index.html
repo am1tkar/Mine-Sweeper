@@ -16,19 +16,26 @@
     <h1 class="main-title">💥Mine Sweeper💥</h1>
     <div class="btns-group">
     <button class="mark-count">Mark count:<br><span>0</span></button>
-    <button class="restart-btn" onclick="reset()"><span>😃</span></button>
     <button class="revealed-count">Revealed count:<br><span>0</span></button>
-    <br>
     <button class="lives-count">Lives:<br><span></span></button>
-    </div>
-    
-    <br>
-    <div class="game-over">
-        <h2><span></span></h2>
-        </br>
-        <!-- <button onclick="init()">Play again!</button> -->
-    </div>
+    <button class="game-timer">Timer: <br><span></span></button>
+    <button class="score">Score: <br><span>0</span></button>
 
+    <br>
+    <button class="restart-btn" onclick="reset()"><span>😃</span></button>
+<div class="difficulty-container">
+    <fieldset>
+<legend>
+    Choose difficulty
+</legend>
+<button class="beginner" onclick="renderLevel(this)">Beginner</button>
+    <button class="medium" onclick="renderLevel(this)">Medium</button>
+    <button class="expert" onclick="renderLevel(this)">Expert</button>
+
+    </fieldset>
+</div>
+<br>
+</div>
     <div class="board-container"></div>
 
     <div class="footer">Amit Karny</div>

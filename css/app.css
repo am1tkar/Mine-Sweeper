@@ -21,10 +21,19 @@ table {
 .main-title {
 border-bottom:solid 1.5px white; 
 }
-/* 
-.btns-group{
-	margin-right: 100px
-} */
+
+fieldset{
+	margin-left: 245px;
+	margin-right: 245px;
+}
+fieldset button{
+	margin: 15px;
+	background-color: rgb(206, 206, 206);
+	border: 2px solid rgb(137, 137, 137);
+	border-radius: 7%;
+	  font-family: 'Indie Flower', cursive;
+    color: rgb(0, 0, 0);
+}
 
 .hide {
 	display: none;
@@ -37,6 +46,10 @@ border: 0px;
 background-color: white;
 color: rgb(0, 0, 0);
 font-family: 'Press Start 2P', cursive;
+}
+
+.restart-btn :hover {
+	cursor: pointer;
 }
 
 .restart-btn{

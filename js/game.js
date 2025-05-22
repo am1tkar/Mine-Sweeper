@@ -27,18 +27,17 @@ const gLevel = {
     MINES: 2
 }
 
-var gMinesLocations = []
+var gMinesLocations
 
 function onInit() {
     gBoard = buildBoard()
     renderBoard(gBoard, '.board-container')
     zeroParams()
+    setScore()
 }
 
 function reset() {
     onInit()
-    zeroParams()
-    gMinesLocations = []
     var elSpan = document.querySelector('.restart-btn span')
     return elSpan.innerText = `${NORMAL}`
 }
@@ -76,32 +75,33 @@ function buildBoard() {
 //create mines random locations
 function createMines(board, firstI, firstJ) {
 
-    for (var i = 0; i < gLevel.MINES; i++) {
-        const randomI = getRandomInt(0, gLevel.SIZE - 1)
-        const randomJ = getRandomInt(0, gLevel.SIZE - 1)
+    gMinesLocations = []
 
-        if (gBoard[firstI][firstJ].isMine) continue
+    for (var i = 0; gMinesLocations.length < gLevel.MINES; i++) {
+        const randomI = getRandomInt(0, gLevel.SIZE)
+        const randomJ = getRandomInt(0, gLevel.SIZE)
 
         if (firstI === randomI && firstJ === randomJ) continue
 
+        const loc = `${randomI},${randomJ}`
 
-        if (!gMinesLocations.includes(`${randomI},${randomJ}`)) {
+        if (!gMinesLocations.includes(loc)) gMinesLocations.push(loc)
 
-            gMinesLocations.push(`${randomI},${randomJ}`)
 
-            board[randomI][randomJ] = {
-                cellType: MINE,
-                isRevealed: false,
-                isUnrevealed: false,
-                isMine: true,
-                isMarked: false,
-                location: `${randomI},${randomJ}`,
-            }
+        board[randomI][randomJ] = {
 
+            cellType: MINE,
+            isRevealed: false,
+            isUnrevealed: false,
+            isMine: true,
+            isMarked: false,
+            location: gMinesLocations[i],
         }
-    }
-}
 
+    }
+
+
+}
 
 //check if it is first click
 function isFirstClick() {
@@ -198,6 +198,7 @@ function onCellClicked(elCell, i, j) {
     // console.log('click!');
 
     if (isFirstClick()) {
+        startTimer()
 
         createMines(gBoard, i, j)
         setMinesNegsCount(gBoard)
@@ -300,6 +301,7 @@ function decreaseMarkCount() {
     document.querySelector('.mark-count span').innerText = gGame.markedCount
 }
 
+//DOM decrease count
 function decreaseLiveCount() {
     if (gGame.lives === 0) return
 
@@ -313,9 +315,28 @@ function updateRevealedCount() {
     document.querySelector('.revealed-count span').innerText = gGame.revealedCount
 }
 
-function zeroParams() {
-    gGame.isOn = true
+//DOM set score accoarding time lapse 
+function setScore() {
+var elScore = document.querySelector('.score span')
+var time = gElTimer.innerText
+var beginnerGoodTime = 10
+var mediumGoodTime = 120
+var expertGoodTime = 600
 
+if (gGame.isOn && (time !== '0.000')) {
+    if ((time<beginnerGoodTime) && (gLevel.SIZE === 4)) elScore.innerText = `${beginnerGoodTime}`
+    if ((time<mediumGoodTime) && (gLevel.SIZE === 8)) elScore.innerText = `${mediumGoodTime}`
+    if ((time<expertGoodTime) && (gLevel.SIZE === 12)) elScore.innerText = `${expertGoodTime}`
+}
+}
+
+
+//for restart use
+function zeroParams() {
+    gElTimer.innerText = '0.000'
+    stopTimer()
+    gMinesLocations = []
+    gGame.isOn = true
     gGame.lives = 3
     gGame.secsPassed = 0
     gGame.revealedCount = 0
@@ -327,6 +348,7 @@ function zeroParams() {
 }
 
 function checkVictory() {
+
     if (gGame.lives < 1) return false
     if (gGame.revealedCount !== gLevel.SIZE ** 2 - gLevel.MINES) return false
     if (gGame.markedCount !== gLevel.MINES) return false
@@ -337,7 +359,9 @@ function checkVictory() {
             if (!gBoard[i][j].isMine && gBoard[i][j].isMarked) return false
         }
     }
+    setScore()
 
+    stopTimer()
     var elSpan = document.querySelector('.restart-btn span')
     elSpan.innerText = `${WIN}`
     gGame.isOn = false
@@ -360,6 +384,8 @@ function showAllMineCell() {
 function gameOver() {
 
     gGame.isOn = false
+    stopTimer()
+        setScore()
     var elSpan = document.querySelector('.restart-btn span')
     elSpan.innerText = `${LOSE}`
 }

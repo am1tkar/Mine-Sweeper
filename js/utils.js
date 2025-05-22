@@ -1,5 +1,10 @@
 'use strict'
 
+    var gElTimer = document.querySelector('.game-timer span')
+
+var gStartTime
+var gTimerInterval
+
 //DOM
 function renderBoard(mat, selector) {
 
@@ -23,10 +28,33 @@ function renderBoard(mat, selector) {
     const elContainer = document.querySelector(selector)
     elContainer.innerHTML = strHTML
 
-    
+
 }
 
+function renderLevel(elBth) {
 
+var elRestartBtn = document.querySelector(elRestartBtn)
+
+    if (!gGame.isOn && (elRestartBtn !== NORMAL)) return
+
+    switch (elBth.innerText) {
+        case 'Beginner':
+            gLevel.SIZE = 4
+            gLevel.MINES = 2
+            break;
+
+        case 'Medium':
+            gLevel.SIZE = 8
+            gLevel.MINES = 14
+
+            break;
+        case 'Expert':
+            gLevel.SIZE = 12
+            gLevel.MINES = 32
+            break;
+    }
+    onInit()
+}
 
 // count neighbours
 function countNegs(board, rowIdx, colIdx) {
@@ -50,7 +78,7 @@ function countNegs(board, rowIdx, colIdx) {
 
 
 function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min
+    return Math.floor(Math.random() * (max - min)) + min
 }
 
 function showElement(selector) {
@@ -68,4 +96,19 @@ function hideElement(selector) {
 function playSound(snd) {
     var audio = new Audio(`snd/${snd}.mp3`);
     audio.play()
+}
+
+function startTimer() {
+    gStartTime = Date.now()
+    gTimerInterval = setInterval(updateTimer, 100)
+}
+
+function updateTimer() {
+    var now = Date.now()
+    var diff = (now - gStartTime) / 1000
+    gElTimer.innerText = diff.toFixed(3)
+}
+
+function stopTimer() {
+    clearInterval(gTimerInterval)
 }
